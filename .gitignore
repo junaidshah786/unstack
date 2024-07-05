@@ -1,0 +1,6 @@
+secrets.toml
+myenv
+test.py
+test.ipynb
+backup.py
+__pycache__
