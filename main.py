@@ -7,6 +7,7 @@ from io import BytesIO
 from app.services.parse_pdf import call_unstract_api, create_text_pdf, call_unstract_api_dummy
 from app.services.generate_response import call_llm
 from app.services.prompt_studio import update_response, add_prompt, remove_prompt, import_prompts, export_prompts_to_json, extract_data_from_pdfs
+from app.services.main_tab import display_pdf, pdf_to_images
 import json
 import logging
 
@@ -92,15 +93,15 @@ def main():
                     # st.session_state.text_output = call_unstract_api_dummy()
 
 
-                
-                            # Convert PDF to images
-                images = pdf_to_images("uploaded_file.pdf")
-                
+                if "image1" not in st.session_state:
+                    # Convert PDF to images
+                    st.session_state.image1 = pdf_to_images("uploaded_file.pdf")
+                    print("IMG 1 CALLED")
                 # Display the PDF and extracted text side by side
                 col1, col2 = st.columns(2)
                 with col1:
                     st.header("Doc View")
-                    display_pdf(images)
+                    display_pdf(st.session_state.image1)
 
                 with col2:
                     st.header("Raw data")
@@ -108,7 +109,10 @@ def main():
                         output_pdf_path = "text_output.pdf"
                         create_text_pdf(st.session_state.text_output, output_pdf_path)
                         st.session_state.text_pdf_display = output_pdf_path
-                    st.markdown(f"![Raw PDF](data:image/png;base64,{base64.b64encode(open(st.session_state.text_pdf_display, 'rb').read()).decode()})", unsafe_allow_html=True)
+                    # st.markdown(f"![Raw PDF](data:image/png;base64,{base64.b64encode(open(st.session_state.text_pdf_display, 'rb').read()).decode()})", unsafe_allow_html=True)
+                        st.session_state.image2 = pdf_to_images(output_pdf_path)
+                        print("IMG 2 Called")
+                    display_pdf(st.session_state.image2)
 
 
 

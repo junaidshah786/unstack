@@ -1,5 +1,5 @@
 import pypdfium2 as pdfium
-
+import streamlit as st
 
 # Function to convert PDF to images using pypdfium2
 def pdf_to_images(pdf_path):
