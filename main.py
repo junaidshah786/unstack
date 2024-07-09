@@ -91,27 +91,52 @@ def main():
                     st.session_state.text_output = call_unstract_api("uploaded_file.pdf")
                     # st.session_state.text_output = call_unstract_api_dummy()
 
+
+                
+                            # Convert PDF to images
+                images = pdf_to_images("uploaded_file.pdf")
+                
                 # Display the PDF and extracted text side by side
                 col1, col2 = st.columns(2)
                 with col1:
                     st.header("Doc View")
-                    if "pdf_display" not in st.session_state:
-                        with open("uploaded_file.pdf", "rb") as f:
-                            base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-                        st.session_state.pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="100%" height="560" type="application/pdf">'
-                    st.markdown(st.session_state.pdf_display, unsafe_allow_html=True)
+                    display_pdf(images)
 
                 with col2:
                     st.header("Raw data")
-
                     if "text_pdf_display" not in st.session_state:
                         output_pdf_path = "text_output.pdf"
                         create_text_pdf(st.session_state.text_output, output_pdf_path)
+                        st.session_state.text_pdf_display = output_pdf_path
+                    st.markdown(f"![Raw PDF](data:image/png;base64,{base64.b64encode(open(st.session_state.text_pdf_display, 'rb').read()).decode()})", unsafe_allow_html=True)
 
-                        with open(output_pdf_path, "rb") as f:
-                            base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-                        st.session_state.text_pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="100%" height="560" type="application/pdf">'
-                    st.markdown(st.session_state.text_pdf_display, unsafe_allow_html=True)
+
+
+                # # Display the PDF and extracted text side by side
+                # col1, col2 = st.columns(2)
+                # with col1:
+                #     st.header("Doc View")
+                #     if "pdf_display" not in st.session_state:
+                #         with open("uploaded_file.pdf", "rb") as f:
+                #             base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                #         st.session_state.pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="100%" height="560" type="application/pdf">'
+                #     st.markdown(st.session_state.pdf_display, unsafe_allow_html=True)
+
+                # with col2:
+                #     st.header("Raw data")
+
+                #     if "text_pdf_display" not in st.session_state:
+                #         output_pdf_path = "text_output.pdf"
+                #         create_text_pdf(st.session_state.text_output, output_pdf_path)
+
+                #         with open(output_pdf_path, "rb") as f:
+                #             base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+                #         st.session_state.text_pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="100%" height="560" type="application/pdf">'
+                #     st.markdown(st.session_state.text_pdf_display, unsafe_allow_html=True)
+
+
+
+
 
                 if "prompts_responses" not in st.session_state:
                     st.session_state.prompts_responses = []
