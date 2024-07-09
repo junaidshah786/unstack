@@ -195,14 +195,15 @@ def main():
 
             uploaded_files = st.file_uploader("Choose multiple PDF files", type="pdf", accept_multiple_files=True)
             if uploaded_files is not None and len(uploaded_files) > 0:
-                # Extract_data = st.button("Extract Data", on_click=extract_data_from_pdfs, args=(uploaded_files,))
                 Extract_data = st.button("Extract Data", type= "primary")
                 if Extract_data:
-                    results = extract_data_from_pdfs(uploaded_files)
-                    # print(f" REsults::::{results}")
-                # Create a DataFrame and save to Excel
-                
-                    edited_df = st.data_editor(results)
+                    if uploaded_file_import is not None:
+                        results = extract_data_from_pdfs(uploaded_files)
+                        
+                    # Create a DataFrame and save to Excel
+                        edited_df = st.data_editor(results)
+                    else:
+                        st.error("Please import prompts first")
 
                     # favorite_command = edited_df.loc[edited_df["rating"].idxmax()]["command"]
                     # st.markdown(f"Your favorite command is **{edited_df}** 🎈")
