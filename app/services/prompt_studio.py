@@ -4,7 +4,8 @@ from openai import OpenAI
 import pandas as pd
 from io import BytesIO
 from app.services.parse_pdf import call_unstract_api_dummy, call_unstract_api
-
+from time import sleep
+from stqdm import stqdm
 # Function to remove a prompt
 def remove_prompt(index):
     st.session_state.prompts_responses.pop(index)
@@ -60,27 +61,28 @@ def update_response(index, context):
 # Function to extract data from multiple PDFs and save to an Excel file
 def extract_data_from_pdfs(uploaded_files):
     results = []
-    # print("lENGTH: ",len(uploaded_files))
-    for uploaded_file in uploaded_files:
-        # Save the uploaded file temporarily
-        with open("uploaded_file.pdf", "wb") as f:
-            f.write(uploaded_file.getbuffer())
+    for uploaded_file in stqdm(uploaded_files, desc="Processing files"):
+            # sleep(0.5)
+            
+            # Save the uploaded file temporarily
+            with open("uploaded_file.pdf", "wb") as f:
+                f.write(uploaded_file.getbuffer())
 
-        # Call the API and process the PDF
-        # text_output = call_unstract_api_dummy()
-        text_output = call_unstract_api("uploaded_file.pdf")
+            # Call the API and process the PDF
+            # text_output = call_unstract_api_dummy()
+            text_output = call_unstract_api("uploaded_file.pdf")
 
-        # Initialize a dictionary for storing the current file's results
-        file_results = {"File Name": uploaded_file.name}
-        for index, pr in enumerate(st.session_state.prompts_responses):
-            prompt = pr["prompt"]
-            description = pr["description"]
-            response = process_prompt(prompt, description, text_output)
-            file_results[prompt] = response
-            # file_results[f"Description {index+1}"] = description
-            # file_results[f"Field Data {index+1}"] = response
-            # print(f"FILE RESULTS: {file_results}")
-        results.append(file_results)
+            # Initialize a dictionary for storing the current file's results
+            file_results = {"File Name": uploaded_file.name}
+            for index, pr in enumerate(st.session_state.prompts_responses):
+                prompt = pr["prompt"]
+                description = pr["description"]
+                response = process_prompt(prompt, description, text_output)
+                file_results[prompt] = response
+                # file_results[f"Description {index+1}"] = description
+                # file_results[f"Field Data {index+1}"] = response
+                # print(f"FILE RESULTS: {file_results}")
+            results.append(file_results)
         
 
     return results
