@@ -6,6 +6,9 @@ from io import BytesIO
 from app.services.parse_pdf import call_unstract_api_dummy, call_unstract_api
 from time import sleep
 from stqdm import stqdm
+from concurrent.futures import ThreadPoolExecutor
+
+
 # Function to remove a prompt
 def remove_prompt(index):
     st.session_state.prompts_responses.pop(index)
@@ -86,6 +89,7 @@ def extract_data_from_pdfs(uploaded_files):
         
 
     return results
+
     
 # Function to process the prompt and return a response (dummy implementation here)
 def process_prompt(prompt, description, context):
