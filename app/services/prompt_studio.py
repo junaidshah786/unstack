@@ -94,7 +94,7 @@ def extract_data_from_pdfs(uploaded_files):
         for page in stqdm(pdf_pages, desc="Processing pages"):
             print("uo")
             text_output = call_unstract_api(page)
-            file_results = {"File Name": uploaded_file.name}
+            file_results = {}
             for index, pr in enumerate(st.session_state.prompts_responses):
                 prompt = pr["prompt"]
                 description = pr["description"]
@@ -128,6 +128,8 @@ def process_prompt(prompt, description, context):
         "role": "user",
         "content": f"""Field Name: {prompt}\
                 Description of Field to be fetched: {description}
+                The asked feild name may or may not be present.\
+                If data is not present  against the asked field name return None.
                 """
         }
     ])
