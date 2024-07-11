@@ -76,7 +76,7 @@ def main():
             if "project_name" not in st.session_state:
                 st.session_state.project_name = ""
             st.session_state.project_name = st.text_input("Project Name", placeholder="Write Your project Name")
-            uploaded_file = st.file_uploader("Choose a PDF file (1 page limit)", type="pdf")
+            uploaded_file = st.file_uploader("Choose a PDF Template (1 page limit)", type="pdf")
             if uploaded_file is not None:
                 if "uploaded_file" not in st.session_state:
                     st.session_state.uploaded_file = "js"
@@ -199,28 +199,13 @@ def main():
                 if Extract_data:
                     if uploaded_file_import is not None:
                         results = extract_data_from_pdfs(uploaded_files)
-                        
+                        print(results)
                     # Create a DataFrame and save to Excel
                         edited_df = st.data_editor(results)
                     else:
                         st.error("Please import prompts first")
 
-                    # favorite_command = edited_df.loc[edited_df["rating"].idxmax()]["command"]
-                    # st.markdown(f"Your favorite command is **{edited_df}** 🎈")
-                    
-                    
-                    # df = pd.DataFrame(results)
-                    # output = BytesIO()
-                    # with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                    #     df.to_excel(writer, index=False, sheet_name='Sheet1')
-                    
-                    # processed_data = output.getvalue()
-                    # st.download_button(
-                    #     label="Download Excel",
-                    #     data=processed_data,
-                    #     file_name="extracted_data.xlsx",
-                    #     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    # )
+
 
 if __name__ == "__main__":
     main()
