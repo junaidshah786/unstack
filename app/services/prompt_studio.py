@@ -140,6 +140,15 @@ def process_prompt(prompt, description, context):
  
     response = response.choices[0].message.content
     # print(response)
-    clean_sql_query = re.sub(r"```json\s*", "", response)
-    clean_sql_query = re.sub(r"```\s*", "", clean_sql_query)
-    return clean_sql_query
+    clean_response = re.sub(r"```json\s*", "", response)
+    clean_response = re.sub(r"```\s*", "", clean_response)
+    
+    try:
+        # Try to parse the response as JSON
+        parsed_response = json.loads(clean_response)
+    except json.JSONDecodeError:
+        # If it's not JSON, return the clean response as it is
+        parsed_response = clean_response
+
+    return parsed_response
+
