@@ -2,7 +2,6 @@ import streamlit as st
 import json
 from openai import OpenAI
 import pandas as pd
-from io import BytesIO
 from app.services.parse_pdf import call_unstract_api_dummy, call_unstract_api
 from time import sleep
 from stqdm import stqdm
@@ -11,7 +10,7 @@ from PyPDF2 import PdfReader, PdfWriter
 import tempfile
 import os
 import time
-
+import re
 # Function to remove a prompt
 def remove_prompt(index):
     st.session_state.prompts_responses.pop(index)
@@ -140,4 +139,7 @@ def process_prompt(prompt, description, context):
     ])
  
     response = response.choices[0].message.content
-    return response
+    # print(response)
+    clean_sql_query = re.sub(r"```json\s*", "", response)
+    clean_sql_query = re.sub(r"```\s*", "", clean_sql_query)
+    return clean_sql_query

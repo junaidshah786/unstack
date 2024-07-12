@@ -202,6 +202,8 @@ def main():
                         print(results)
                     # Create a DataFrame and save to Excel
                         edited_df = st.data_editor(results)
+
+                        st.json(results)
                     else:
                         st.error("Please import prompts first")
 

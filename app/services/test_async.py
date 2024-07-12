@@ -11,6 +11,7 @@ from PyPDF2 import PdfReader, PdfWriter
 import tempfile
 import os
 import time
+import concurrent.futures
 
 # Function to remove a prompt
 def remove_prompt(index):
@@ -93,15 +94,17 @@ def extract_data_from_pdfs(uploaded_files):
         page_number = 1
         for page in stqdm(pdf_pages, desc="Processing pages"):
             print("uo")
+            
             start_time = time.time()
             text_output = call_unstract_api(page)
-            file_results = {}
-
-            response = process_prompt_all(st.session_state.prompts_responses, text_output)
-            file_results[prompt] = response
+            end_time = time.time()
+            print("unstract time:", end_time- start_time)
+            
+            start_time = time.time()
+            response = process_prompt_all(st.session_state.prompts_responses, text_output, page_number)
+            results.extend(response)
             end_time= time.time()
-            print("time taken:",end_time - start_time)
-            results.append(file_results)
+            print("time taken for prompts:",end_time - start_time)
             page_number+=1
 
         # Clean up temporary page files
@@ -142,12 +145,13 @@ def process_prompt(prompt, description, context):
 
 
 
-def process_prompt_all(prompts_responses, text_output):
-    file_results = {}
+# Function to process all prompts concurrently and return structured results
+def process_prompt_all(prompts_responses, context, page_number):
+    print(prompts_responses)
     # Create a ThreadPoolExecutor
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
         # Submit tasks to the executor and store the future along with its index
-        future_to_index = {executor.submit(process_prompt, "what is the Number", "", f"The number is: {i}"): i for i in range(15)}
+        future_to_index = {executor.submit(process_prompt, pr["prompt"], pr["description"], context): i for i, pr in enumerate(prompts_responses)}
 
         # Retrieve results and store them in a list with their indices
         results_with_indices = [(future_to_index[future], future.result()) for future in concurrent.futures.as_completed(future_to_index)]
@@ -155,5 +159,7 @@ def process_prompt_all(prompts_responses, text_output):
     # Sort the results by their original indices
     results_with_indices.sort()
 
-    # Extract the sorted results
-    sorted_results = [result for _, result in results_with_indices]
+    # Extract the sorted results and construct the final list
+    sorted_results = [{"Page No.": page_number, prompts_responses[index]["prompt"]: prompts_responses[index]["prompt"], "description": prompts_responses[index]["description"], "response": result} for index, result in results_with_indices]
+
+    return sorted_results
