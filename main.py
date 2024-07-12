@@ -24,7 +24,7 @@ logger = logging.getLogger('my_logger')
 
 
 
-st.title("Expentract")
+st.title("Data Extractor")
 
 # Inject custom CSS to set the sidebar width
 st.markdown(
