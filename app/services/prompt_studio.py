@@ -10,7 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 from PyPDF2 import PdfReader, PdfWriter
 import tempfile
 import os
-
+import time
 
 # Function to remove a prompt
 def remove_prompt(index):
@@ -90,17 +90,22 @@ def extract_data_from_pdfs(uploaded_files):
                 pdf_pages = split_pdf_to_pages(temp_uploaded_file.name)
             else:
                 pdf_pages = [temp_uploaded_file.name]
-
+        page_number = 1
         for page in stqdm(pdf_pages, desc="Processing pages"):
             print("uo")
+            start_time = time.time()
             text_output = call_unstract_api(page)
             file_results = {}
             for index, pr in enumerate(st.session_state.prompts_responses):
                 prompt = pr["prompt"]
                 description = pr["description"]
                 response = process_prompt(prompt, description, text_output)
+                file_results['Page No.'] = page_number
                 file_results[prompt] = response
+            end_time= time.time()
+            print("time taken:",end_time - start_time)
             results.append(file_results)
+            page_number+=1
 
         # Clean up temporary page files
         for page in pdf_pages:
