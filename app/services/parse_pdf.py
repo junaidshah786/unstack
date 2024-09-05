@@ -42,7 +42,7 @@ def create_text_pdf(text, output_pdf_path):
 
 # Function to call the Unstract API
 def call_unstract_api(pdf_file_path):
-    url = 'https://llmwhisperer-api.unstract.com/v1/whisper?processing_mode=ocr&output_mode=line-printer&force_text_processing=false&page_seperator=%3C%3C%3C&timeout=200&store_metadata_for_highlighting=true&median_filter_size=0&gaussian_blur_radius=0&ocr_provider=simple&line_splitter_tolerance=0.4&horizontal_stretch_factor=1'
+    url = 'https://llmwhisperer-api.unstract.com/v1/whisper?processing_mode=ocr&output_mode=line-printer&force_text_processing=false&page_seperator=%3C%3C%3C&timeout=200&store_metadata_for_highlighting=true&median_filter_size=0&gaussian_blur_radius=0&ocr_provider=advanced&line_splitter_tolerance=0.4&horizontal_stretch_factor=1'
     headers = {
         'accept': 'text/plain',
         'unstract-key': unstract_key,
